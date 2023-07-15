@@ -7,8 +7,8 @@ spring:
 
 eureka:
   client:
-    registerWithEureka: false
-    fetchRegistry: false
+    register-with-eureka: false
+    fetch-registry: false
   server:
     eviction-interval-timer-in-ms: 30000
     renewal-percent-threshold: 0.85
