@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: registry-app
+  profiles:
+    active: prod
 
 eureka:
   client:
