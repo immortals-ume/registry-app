@@ -6,7 +6,7 @@ LABEL authors="kaish"
 
 # Install required packages: Maven, JDK 17, and other dependencies
 RUN apt-get update && \
-    apt-get install -y maven openjdk-17-jdk curl && \
+    apt-get install -y maven openjdk-21-jdk curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
