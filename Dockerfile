@@ -1,33 +1,34 @@
-# Use an official Ubuntu base image
-FROM ubuntu:20.04
+# ---------- Stage 1: Build ----------
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
-# Metadata about the image
+LABEL stage="builder"
+
+# Set work directory inside the builder
+WORKDIR /build
+
+# Copy pom.xml and download dependencies first (to cache layers)
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copy the rest of the source code
+COPY src ./src
+
+# Package the application
+RUN mvn clean package -DskipTests
+
+# ---------- Stage 2: Runtime ----------
+FROM eclipse-temurin:17-jre as runtime
+
 LABEL authors="kaish"
 
-# Install required packages: Maven, JDK 17, and other dependencies
-RUN apt-get update && \
-    apt-get install -y maven openjdk-17-jdk curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Set the working directory in the runtime image
+WORKDIR /app
 
-# Set environment variables for Java and Maven
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV MAVEN_HOME=/usr/share/maven
-ENV PATH="${MAVEN_HOME}/bin:${JAVA_HOME}/bin:${PATH}"
+# Copy the JAR from the builder stage
+COPY --from=builder /build/target/registry-app-1.0.2.jar ./app.jar
 
+# Expose the application port (adjust if needed)
+EXPOSE 8080
 
-# Set the working directory
-WORKDIR /usr/src/app
-
-# Copy the entire Maven project to the container
-COPY . .
-
-# Build the project (uncomment if you want to build it here)
-RUN mvn clean package
-
-# Specify the JAR file to copy (assuming it's named "registry-app-1.0.1.jar" after build)
-# Make sure this matches the actual output JAR name from your Maven build
-COPY target/registry-app-1.0.2.jar registry-app-1.0.2.jar
-
-# Run the jar file
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "registry-app-1.0.2.jar"]
+# Run the application
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
