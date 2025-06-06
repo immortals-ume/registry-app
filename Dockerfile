@@ -6,7 +6,7 @@ LABEL authors="kaish"
 
 # Install required packages: Maven, JDK 17, and other dependencies
 RUN apt-get update && \
-    apt-get install -y maven openjdk-21-jdk curl && \
+    apt-get install -y maven openjdk-17-jdk curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -27,7 +27,7 @@ RUN mvn clean package
 
 # Specify the JAR file to copy (assuming it's named "registry-app-1.0.1.jar" after build)
 # Make sure this matches the actual output JAR name from your Maven build
-COPY target/registry-app-1.0.1.jar registry-app-1.0.1.jar
+COPY target/registry-app-1.0.2.jar registry-app-1.0.2.jar
 
 # Run the jar file
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "registry-app-1.0.1.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "registry-app-1.0.2.jar"]
