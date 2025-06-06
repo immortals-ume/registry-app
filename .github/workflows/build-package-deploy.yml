@@ -79,10 +79,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🐳 Build Docker Image
-        run: docker build -t local-image:latest .
+        run: docker build -t registry-app:latest .
 
       - name: 🏷️ Tag Docker Image
-        run: docker tag local-image:latest ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+        run: docker tag registry-app:latest
 
       - name: 📤 Push Docker Image
-        run: docker push ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+        run: docker push ${{ env.DOCKER_REGISTRY }}/registry-app:latest
